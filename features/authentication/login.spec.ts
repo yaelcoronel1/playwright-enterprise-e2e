@@ -28,4 +28,11 @@ test.describe('Authentication - Feature', () => {
     await loginPage.login('locked', 'locked');
     await loginPage.blockMsgVisible('Tu cuenta ha sido bloqueada temporalmente. Contacta con soporte.')
   })
+
+  test('Successful logout', async ({page}) => {
+    await loginPage.login('demo', 'demo123');
+    dashboardPage = new DashboardPage(page);
+    await dashboardPage.validateLoaded();
+    await dashboardPage.logout();
+  })
 })
