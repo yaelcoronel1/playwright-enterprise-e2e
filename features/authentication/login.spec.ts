@@ -1,17 +1,26 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../../pages/login.page';
+import { DashboardPage } from '../../pages/dashboard.page';
 
-test.beforeEach('page opening', async ({ page }) => {
-  await page.goto('https://homebanking-demo-tests.netlify.app/');
-  const title = page.getByRole('heading', { name: 'HOME BANKING' });
-  await expect(title).toBeVisible();
-})
+test.describe('Authentication - Feature', () => {
 
-test('login', async ({page}) => {
-  await page.goto('https://homebanking-demo-tests.netlify.app/');
-  const user_input = page.getByRole('textbox', { name: 'Usuario' });
-  const pass_input = page.getByRole('textbox', { name: 'Contraseña' });
-  const login_button = page.getByRole('button', { name: 'Ingresar' });
-  await user_input.fill('demo');
-  await pass_input.fill('demo123');
-  await login_button.click();
+  let loginPage: LoginPage;
+  let dashboardPage: DashboardPage;
+
+  test.beforeEach('page opening', async ({ page }) => {
+    loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.validateLoaded();
+  })
+
+  test('Login with valid credentials', async ({page}) => {
+    await loginPage.login('demo', 'demo123');
+    dashboardPage = new DashboardPage(page);
+    await dashboardPage.validateLoaded();
+  })
+
+  test('Login with invalid credentials', async () => {
+    await loginPage.login('wrongUser', 'wrongPass');
+    await loginPage.errorIsVisible('Usuario o contraseña incorrectos');
+  })
 })
