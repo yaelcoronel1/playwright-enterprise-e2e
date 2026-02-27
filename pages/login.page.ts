@@ -7,6 +7,7 @@ export class LoginPage{
     readonly loginButton: Locator;
     readonly title: Locator;
     readonly invalidLoginMsg: Locator;
+    readonly blockMsg: Locator;
 
     constructor(page: Page) {
     this.page = page;
@@ -16,6 +17,7 @@ export class LoginPage{
     this.loginButton = page.getByRole('button', { name: 'Ingresar' });
     this.title = page.getByRole('heading', { name: 'HOME BANKING' });
     this.invalidLoginMsg = page.getByText('Usuario o contraseña');
+    this.blockMsg = page.getByText('Tu cuenta ha sido bloqueada');
   }
 
   async goto() {
@@ -36,6 +38,12 @@ export class LoginPage{
     await expect(this.title).toBeVisible();
     await expect(this.invalidLoginMsg).toBeVisible();
     await expect(this.invalidLoginMsg).toContainText(expectedMessage); 
+  }
+
+  async blockMsgVisible(expectedMessage: string){
+    await expect(this.title).toBeVisible();
+    await expect(this.blockMsg).toBeVisible();
+    await expect(this.blockMsg).toContainText(expectedMessage); 
   }
 
 }

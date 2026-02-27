@@ -23,4 +23,9 @@ test.describe('Authentication - Feature', () => {
     await loginPage.login('wrongUser', 'wrongPass');
     await loginPage.errorIsVisible('Usuario o contraseña incorrectos');
   })
+
+  test('Locked account message', async () => {
+    await loginPage.login('locked', 'locked');
+    await loginPage.blockMsgVisible('Tu cuenta ha sido bloqueada temporalmente. Contacta con soporte.')
+  })
 })
