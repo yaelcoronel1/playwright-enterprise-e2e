@@ -18,7 +18,7 @@ export class LoginPage{
     this.title = page.getByRole('heading', { name: 'HOME BANKING' });
     this.invalidLoginMsg = page.getByText('Usuario o contraseña');
     this.blockMsg = page.getByText('Tu cuenta ha sido bloqueada');
-  }
+}
 
   async goto() {
     await this.page.goto('/');
@@ -26,6 +26,7 @@ export class LoginPage{
 
   async validateLoaded() {
     await this.title.waitFor();
+    await expect(this.title).toBeVisible();
   }
 
   async login(username: string, password: string) {
@@ -45,5 +46,4 @@ export class LoginPage{
     await expect(this.blockMsg).toBeVisible();
     await expect(this.blockMsg).toContainText(expectedMessage); 
   }
-
 }

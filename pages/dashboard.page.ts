@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 export class DashboardPage{
     readonly page: Page;
@@ -18,6 +18,7 @@ export class DashboardPage{
 
   async validateLoaded() {
     await this.dashboardTitle.waitFor();
+    await expect(this.dashboardTitle).toBeVisible();
     await this.dashboardExitBtn.waitFor();
   }
 

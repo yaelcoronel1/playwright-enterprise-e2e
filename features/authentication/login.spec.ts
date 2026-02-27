@@ -1,13 +1,15 @@
-import { test, expect } from '@playwright/test';
+import { test} from '@playwright/test';
 import { LoginPage } from '../../pages/login.page';
 import { DashboardPage } from '../../pages/dashboard.page';
+import { DocumentationPanel } from '../../pages/documentation.panel.';
 
 test.describe('Authentication - Feature', () => {
 
   let loginPage: LoginPage;
   let dashboardPage: DashboardPage;
+  let docPanel: DocumentationPanel;
 
-  test.beforeEach('page opening', async ({ page }) => {
+  test.beforeEach('Page opening', async ({ page }) => {
     loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.validateLoaded();
@@ -24,7 +26,7 @@ test.describe('Authentication - Feature', () => {
     await loginPage.errorIsVisible('Usuario o contraseña incorrectos');
   })
 
-  test('Locked account message', async () => {
+  test('Locked account', async () => {
     await loginPage.login('locked', 'locked');
     await loginPage.blockMsgVisible('Tu cuenta ha sido bloqueada temporalmente. Contacta con soporte.')
   })
@@ -34,5 +36,10 @@ test.describe('Authentication - Feature', () => {
     dashboardPage = new DashboardPage(page);
     await dashboardPage.validateLoaded();
     await dashboardPage.logout();
+  })
+
+  test('Documentation panel links', async ({page}) => {
+    let docPanel = new DocumentationPanel(page);
+    await docPanel.validateDocPanelLinks();
   })
 })
