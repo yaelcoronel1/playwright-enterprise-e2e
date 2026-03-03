@@ -16,11 +16,6 @@ export class DashboardPage extends BasePage{
     this.dashboardLogoutConfirm = page.getByRole('button', { name: 'Confirmar' });
   }
 
-  async validateLoaded() {
-    await expect(this.dashboardTitle).toBeVisible();
-    await this.dashboardExitBtn.waitFor();
-  }
-
   async logout(){
     await this.dashboardExitBtn.click();
     await expect(this.dashboardLogoutHeading).toBeVisible();

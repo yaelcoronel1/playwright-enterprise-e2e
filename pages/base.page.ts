@@ -11,6 +11,10 @@ export class BasePage{
     await this.page.goto('/');
   }
 
+  async validateLoaded(locator: Locator) {
+    await expect(locator).toBeVisible();
+  }
+
   protected async openLinkInNewTab(link: Locator, expectedUrl: RegExp) {
   const [newPage] = await Promise.all([
     this.page.context().waitForEvent('page'),

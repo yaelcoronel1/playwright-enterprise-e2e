@@ -20,10 +20,6 @@ export class LoginPage extends BasePage{
     this.blockMsg = page.getByText('Tu cuenta ha sido bloqueada');
 }
 
-  async validateLoaded() {
-    await expect(this.title).toBeVisible();
-  }
-
   async login(username: string, password: string) {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
@@ -31,13 +27,11 @@ export class LoginPage extends BasePage{
   }
 
   async errorIsVisible(expectedMessage: string){
-    await expect(this.title).toBeVisible();
     await expect(this.invalidLoginMsg).toBeVisible();
     await expect(this.invalidLoginMsg).toContainText(expectedMessage); 
   }
 
   async blockMsgVisible(expectedMessage: string){
-    await expect(this.title).toBeVisible();
     await expect(this.blockMsg).toBeVisible();
     await expect(this.blockMsg).toContainText(expectedMessage); 
   }

@@ -10,14 +10,15 @@ test.describe('Authentication - Feature', () => {
     const basePage = new BasePage(page);
     const loginPage = new LoginPage(page);
     await basePage.goto();
-    await loginPage.validateLoaded();
+    await basePage.validateLoaded(loginPage.title);
   })
 
   test('Login with valid credentials', async ({page}) => {
+    const basePage = new BasePage(page);
     const loginPage = new LoginPage(page);
     const dashboardPage = new DashboardPage(page);
     await loginPage.login('demo', 'demo123');
-    await dashboardPage.validateLoaded();
+    await basePage.validateLoaded(dashboardPage.dashboardTitle);
   })
 
   test('Login with invalid credentials', async ({page}) => {
@@ -33,10 +34,11 @@ test.describe('Authentication - Feature', () => {
   })
 
   test('Successful logout', async ({page}) => {
+    const basePage = new BasePage(page);
     const loginPage = new LoginPage(page);
     const dashboardPage = new DashboardPage(page);
     await loginPage.login('demo', 'demo123');
-    await dashboardPage.validateLoaded();
+    await basePage.validateLoaded(dashboardPage.dashboardTitle);
     await dashboardPage.logout();
   })
 
