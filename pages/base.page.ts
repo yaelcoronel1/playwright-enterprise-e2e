@@ -1,5 +1,4 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { LoginPage } from './login.page';
 
 export class BasePage {
   protected page: Page;
