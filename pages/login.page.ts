@@ -1,5 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
+import { DashboardPage } from './dashboard.page';
 
 export class LoginPage extends BasePage {
   readonly usernameInput: Locator;
@@ -24,6 +25,8 @@ export class LoginPage extends BasePage {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
+    const dashboardPage = new DashboardPage(this.page);
+    return dashboardPage;
   }
 
   async errorIsVisible(expectedMessage: string) {

@@ -19,6 +19,14 @@ jobs:
         with:
           node-version: 20
 
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
       - name: Install dependencies
         run: npm ci
 
@@ -28,10 +36,13 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      - name: Run ESLint fix
+        run: npm run lint:fix
+
       - name: Run Tests
         run: npx playwright test
 
-      - name: Upload HTML Report
+      - name: Upload Playwright Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
