@@ -15,11 +15,11 @@
     "prepare": "husky"
   },
   "lint-staged": {
-  "*.ts": [
-    "eslint . --ext .ts --fix",
-    "prettier --write ."
-  ]
-},
+    "*.ts": [
+      "eslint . --ext .ts --fix",
+      "prettier --write ."
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
