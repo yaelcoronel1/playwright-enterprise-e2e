@@ -1,13 +1,13 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
 
-export class DashboardPage extends BasePage{
-    readonly dashboardTitle : Locator;
-    readonly dashboardExitBtn: Locator;
-    readonly dashboardLogoutHeading: Locator;
-    readonly dashboardLogoutConfirm: Locator;
+export class DashboardPage extends BasePage {
+  readonly dashboardTitle: Locator;
+  readonly dashboardExitBtn: Locator;
+  readonly dashboardLogoutHeading: Locator;
+  readonly dashboardLogoutConfirm: Locator;
 
-    constructor(page: Page) {
+  constructor(page: Page) {
     super(page);
 
     this.dashboardTitle = page.getByRole('heading', { name: 'Panel Principal' });
@@ -16,7 +16,7 @@ export class DashboardPage extends BasePage{
     this.dashboardLogoutConfirm = page.getByRole('button', { name: 'Confirmar' });
   }
 
-  async logout(){
+  async logout() {
     await this.dashboardExitBtn.click();
     await expect(this.dashboardLogoutHeading).toBeVisible();
     await this.dashboardLogoutConfirm.click();
