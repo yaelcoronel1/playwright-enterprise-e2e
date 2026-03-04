@@ -3,47 +3,48 @@ import { BasePage } from '../../pages/base.page';
 import { LoginPage } from '../../pages/login.page';
 import { DashboardPage } from '../../pages/dashboard.page';
 import { DocumentationPanel } from '../../pages/documentation.panel';
+import { users } from '../../test-data/credentials';
 
 test.describe('Authentication - Feature', () => {
-  test.beforeEach('Page opening', async ({ page }) => {
+  test.beforeEach('Should open the page', async ({ page }) => {
     const basePage = new BasePage(page);
     const loginPage = new LoginPage(page);
     await basePage.goto();
     await basePage.validateLoaded(loginPage.title);
   });
 
-  test('Login with valid credentials', async ({ page }) => {
+  test('Should login with valid credentials', async ({ page }) => {
     const basePage = new BasePage(page);
     const loginPage = new LoginPage(page);
     const dashboardPage = new DashboardPage(page);
-    await loginPage.login('demo', 'demo123');
+    await loginPage.login(users.valid.username, users.valid.password);
     await basePage.validateLoaded(dashboardPage.dashboardTitle);
   });
 
-  test('Login with invalid credentials', async ({ page }) => {
+  test('Should not be able to login with invalid credentials', async ({ page }) => {
     const loginPage = new LoginPage(page);
-    await loginPage.login('wrongUser', 'wrongPass');
+    await loginPage.login(users.invalid.username, users.invalid.password);
     await loginPage.errorIsVisible('Usuario o contraseña incorrectos');
   });
 
-  test('Locked account', async ({ page }) => {
+  test('Should lock account', async ({ page }) => {
     const loginPage = new LoginPage(page);
-    await loginPage.login('locked', 'locked');
+    await loginPage.login(users.locked.username, users.locked.password);
     await loginPage.blockMsgVisible(
       'Tu cuenta ha sido bloqueada temporalmente. Contacta con soporte.',
     );
   });
 
-  test('Successful logout', async ({ page }) => {
+  test('Should successfully logout', async ({ page }) => {
     const basePage = new BasePage(page);
     const loginPage = new LoginPage(page);
     const dashboardPage = new DashboardPage(page);
-    await loginPage.login('demo', 'demo123');
+    await loginPage.login(users.valid.username, users.valid.password);
     await basePage.validateLoaded(dashboardPage.dashboardTitle);
     await dashboardPage.logout();
   });
 
-  test('Documentation panel links', async ({ page }) => {
+  test('Should validate documentation panel links', async ({ page }) => {
     const docPanel = new DocumentationPanel(page);
     await docPanel.validateDocPanelLinks();
   });
