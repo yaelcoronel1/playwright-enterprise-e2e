@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
+import { LoginPage } from './login.page';
 
 export class BasePage {
   protected page: Page;
@@ -9,6 +10,8 @@ export class BasePage {
 
   async goto() {
     await this.page.goto('/');
+    const loginPage = new LoginPage(this.page);
+    return loginPage;
   }
 
   async validateLoaded(locator: Locator) {

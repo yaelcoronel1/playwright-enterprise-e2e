@@ -1,23 +1,20 @@
 import { test } from '@playwright/test';
 import { BasePage } from '../../pages/base.page';
 import { LoginPage } from '../../pages/login.page';
-import { DashboardPage } from '../../pages/dashboard.page';
 import { DocumentationPanel } from '../../pages/documentation.panel';
 import { users } from '../../test-data/credentials';
 
 test.describe('Authentication - Feature', () => {
   test.beforeEach('Should open the page', async ({ page }) => {
     const basePage = new BasePage(page);
-    const loginPage = new LoginPage(page);
-    await basePage.goto();
+    const loginPage = await basePage.goto();
     await basePage.validateLoaded(loginPage.title);
   });
 
   test('Should login with valid credentials', async ({ page }) => {
     const basePage = new BasePage(page);
     const loginPage = new LoginPage(page);
-    const dashboardPage = new DashboardPage(page);
-    await loginPage.login(users.valid.username, users.valid.password);
+    const dashboardPage = await loginPage.login(users.valid.username, users.valid.password);
     await basePage.validateLoaded(dashboardPage.dashboardTitle);
   });
 
@@ -38,10 +35,10 @@ test.describe('Authentication - Feature', () => {
   test('Should successfully logout', async ({ page }) => {
     const basePage = new BasePage(page);
     const loginPage = new LoginPage(page);
-    const dashboardPage = new DashboardPage(page);
-    await loginPage.login(users.valid.username, users.valid.password);
+    const dashboardPage = await loginPage.login(users.valid.username, users.valid.password);
     await basePage.validateLoaded(dashboardPage.dashboardTitle);
-    await dashboardPage.logout();
+    const returnedLoginPage = await dashboardPage.logout();
+    await basePage.validateLoaded(returnedLoginPage.title);
   });
 
   test('Should validate documentation panel links', async ({ page }) => {

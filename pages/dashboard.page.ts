@@ -1,5 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
+import { LoginPage } from './login.page';
 
 export class DashboardPage extends BasePage {
   readonly dashboardTitle: Locator;
@@ -20,5 +21,7 @@ export class DashboardPage extends BasePage {
     await this.dashboardExitBtn.click();
     await expect(this.dashboardLogoutHeading).toBeVisible();
     await this.dashboardLogoutConfirm.click();
+
+    return new LoginPage(this.page);
   }
 }
