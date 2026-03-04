@@ -7,7 +7,8 @@ import { users } from '../../test-data/credentials';
 test.describe('Authentication - Feature', () => {
   test.beforeEach('Should open the page', async ({ page }) => {
     const basePage = new BasePage(page);
-    const loginPage = await basePage.goto();
+    const loginPage = new LoginPage(page);
+    await basePage.goto();
     await basePage.validateLoaded(loginPage.title);
   });
 

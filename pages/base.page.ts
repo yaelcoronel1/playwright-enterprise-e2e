@@ -10,8 +10,6 @@ export class BasePage {
 
   async goto() {
     await this.page.goto('/');
-    const loginPage = new LoginPage(this.page);
-    return loginPage;
   }
 
   async validateLoaded(locator: Locator) {
