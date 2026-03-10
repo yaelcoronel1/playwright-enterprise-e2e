@@ -1,4 +1,5 @@
 import { test as base } from '@playwright/test';
+import { users } from '../test-data/credentials';
 import { BasePage } from '../pages/base.page';
 import { LoginPage } from '../pages/login.page';
 import { DocumentationPanel } from '../pages/documentation.panel';
@@ -9,6 +10,7 @@ type Pages = {
   loginPage: LoginPage;
   documentationPanel: DocumentationPanel;
   dashboardPage: DashboardPage;
+  loggedInDashboard: DashboardPage;
 };
 
 export const test = base.extend<Pages>({
@@ -26,6 +28,12 @@ export const test = base.extend<Pages>({
 
   dashboardPage: async ({ page }, use) => {
     await use(new DashboardPage(page));
+  },
+
+  loggedInDashboard: async ({ loginPage }, use) => {
+    const dashboardPage = await loginPage.login(users.valid.username, users.valid.password);
+
+    await use(dashboardPage);
   },
 });
 

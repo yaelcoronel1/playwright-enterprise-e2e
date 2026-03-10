@@ -7,9 +7,8 @@ test.describe('Authentication - Feature', () => {
     await basePage.validateLoaded(loginPage.title);
   });
 
-  test('Should login with valid credentials', async ({ basePage, loginPage }) => {
-    const dashboardPage = await loginPage.login(users.valid.username, users.valid.password);
-    await basePage.validateLoaded(dashboardPage.dashboardTitle);
+  test('Should login with valid credentials', async ({ basePage, loggedInDashboard }) => {
+    await basePage.validateLoaded(loggedInDashboard.dashboardTitle);
   });
 
   test('Should not be able to login with invalid credentials', async ({ loginPage }) => {
@@ -24,10 +23,9 @@ test.describe('Authentication - Feature', () => {
     );
   });
 
-  test('Should successfully logout', async ({ basePage, loginPage }) => {
-    const dashboardPage = await loginPage.login(users.valid.username, users.valid.password);
-    await basePage.validateLoaded(dashboardPage.dashboardTitle);
-    const returnedLoginPage = await dashboardPage.logout();
+  test('Should successfully logout', async ({ basePage, loggedInDashboard }) => {
+    await basePage.validateLoaded(loggedInDashboard.dashboardTitle);
+    const returnedLoginPage = await loggedInDashboard.logout();
     await basePage.validateLoaded(returnedLoginPage.title);
   });
 
