@@ -10,4 +10,9 @@ test.describe('Dashboard - Feature', () => {
     await basePage.validateLoaded(loggedInDashboard.dashboardTitle);
     await loggedInDashboard.validateMainProducts();
   });
+
+  test('Should validate the most recent transaction', async ({ basePage, loggedInDashboard }) => {
+    await basePage.validateLoaded(loggedInDashboard.dashboardTitle);
+    await loggedInDashboard.validateMostRecentTransaction();
+  });
 });

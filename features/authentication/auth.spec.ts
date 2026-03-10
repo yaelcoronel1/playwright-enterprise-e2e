@@ -1,5 +1,5 @@
 import { test } from '../../fixtures/pages.fixture';
-import { users } from '../../test-data/credentials';
+import { users } from '../../test-data/authentication/credentials';
 
 test.describe('Authentication - Feature', () => {
   test.beforeEach('Should open the page', async ({ basePage, loginPage }) => {
