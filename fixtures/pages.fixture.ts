@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { users } from '../test-data/credentials';
+import { users } from '../test-data/authentication/credentials';
 import { BasePage } from '../pages/base.page';
 import { LoginPage } from '../pages/login.page';
 import { DocumentationPanel } from '../pages/documentation.panel';
