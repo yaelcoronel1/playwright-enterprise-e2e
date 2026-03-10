@@ -1,7 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
 import { LoginPage } from './login.page';
-import { transaction } from '../test-data/dashboard/recentTransaction';
+import { transaction } from '../test-data/dashboard/recent-transaction';
 
 export class DashboardPage extends BasePage {
   readonly dashboardTitle: Locator;

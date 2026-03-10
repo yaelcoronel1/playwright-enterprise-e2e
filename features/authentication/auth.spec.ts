@@ -13,14 +13,12 @@ test.describe('Authentication - Feature', () => {
 
   test('Should not be able to login with invalid credentials', async ({ loginPage }) => {
     await loginPage.login(users.invalid.username, users.invalid.password);
-    await loginPage.errorIsVisible('Usuario o contraseña incorrectos');
+    await loginPage.errorMsgIsVisible();
   });
 
   test('Should lock account', async ({ loginPage }) => {
     await loginPage.login(users.locked.username, users.locked.password);
-    await loginPage.blockMsgVisible(
-      'Tu cuenta ha sido bloqueada temporalmente. Contacta con soporte.',
-    );
+    await loginPage.blockMsgIsVisible();
   });
 
   test('Should successfully logout', async ({ basePage, loggedInDashboard }) => {

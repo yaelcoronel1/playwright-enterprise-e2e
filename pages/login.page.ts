@@ -1,6 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
 import { DashboardPage } from './dashboard.page';
+import { errors } from '../test-data/authentication/error-messages';
 
 export class LoginPage extends BasePage {
   readonly usernameInput: Locator;
@@ -29,13 +30,20 @@ export class LoginPage extends BasePage {
     return dashboardPage;
   }
 
-  async errorIsVisible(expectedMessage: string) {
+  protected async validateError(expectedMessage: string) {
     await expect(this.invalidLoginMsg).toBeVisible();
     await expect(this.invalidLoginMsg).toContainText(expectedMessage);
   }
 
-  async blockMsgVisible(expectedMessage: string) {
+  protected async validateBlock(expectedMessage: string) {
     await expect(this.blockMsg).toBeVisible();
     await expect(this.blockMsg).toContainText(expectedMessage);
+  }
+  async errorMsgIsVisible() {
+    await this.validateError(errors.error.msg);
+  }
+
+  async blockMsgIsVisible() {
+    await this.validateBlock(errors.block.msg);
   }
 }
