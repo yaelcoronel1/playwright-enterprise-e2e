@@ -1,4 +1,4 @@
-import { test } from '../../fixtures/pages.fixture';
+import { test } from '../../fixtures/login.fixture';
 import { users } from '../../test-data/authentication/credentials';
 
 test.describe('Authentication - Feature', () => {
@@ -7,8 +7,9 @@ test.describe('Authentication - Feature', () => {
     await basePage.validateLoaded(loginPage.title);
   });
 
-  test('Should login with valid credentials', async ({ basePage, loggedInDashboard }) => {
-    await basePage.validateLoaded(loggedInDashboard.dashboardTitle);
+  test('Should login with valid credentials', async ({ basePage, loginPage, dashboardPage }) => {
+    await loginPage.login(users.valid.username, users.valid.password);
+    await basePage.validateLoaded(dashboardPage.dashboardTitle);
   });
 
   test('Should not be able to login with invalid credentials', async ({ loginPage }) => {
