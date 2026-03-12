@@ -1,4 +1,4 @@
-import { test } from '../../fixtures/pages.fixture';
+import { test } from '../../fixtures/login.fixture';
 
 test.describe('Dashboard - Feature', () => {
   test.beforeEach('Should open the page', async ({ basePage, loginPage }) => {
