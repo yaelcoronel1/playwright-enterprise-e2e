@@ -2,6 +2,8 @@ import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
 import { LoginPage } from './login.page';
 import { transaction } from '../test-data/dashboard/recent-transaction';
+import { balance } from '../test-data/dashboard/current-balance';
+import { defaultBalance } from '../test-data/dashboard/default-balance';
 
 export class DashboardPage extends BasePage {
   readonly dashboardTitle: Locator;
@@ -9,8 +11,16 @@ export class DashboardPage extends BasePage {
   readonly dashboardLogoutHeading: Locator;
   readonly dashboardLogoutConfirm: Locator;
   readonly checkingAccount: Locator;
+  readonly checkingAccountBalance: Locator;
+  readonly defaultAccountBalance: Locator;
   readonly savingsBank: Locator;
+  readonly savingsBankBalance: Locator;
+  readonly defaultSavingsBalance: Locator;
   readonly creditCard: Locator;
+  readonly creditCardBalance: Locator;
+  readonly restoreBalanceButton: Locator;
+  readonly restoreBalancedHeading: Locator;
+  readonly restoreBalanceConfirm: Locator;
   readonly latestTransactionsHeading: Locator;
   readonly latestTransaction: Locator;
   readonly latestTransactionDate: Locator;
@@ -26,8 +36,16 @@ export class DashboardPage extends BasePage {
     this.checkingAccount = page.getByText(
       'Cuenta Corriente **** **** **** 1234 Saldo disponible $',
     );
+    this.checkingAccountBalance = page.getByText('125.450,75');
+    this.defaultAccountBalance = page.getByText('500.000,00');
     this.savingsBank = page.getByText('Caja de Ahorro **** **** **** 5678 Saldo disponible $');
+    this.savingsBankBalance = page.getByText('89.320,50');
+    this.defaultSavingsBalance = page.getByText('250.000,00');
     this.creditCard = page.getByText('Caja de Ahorro **** **** **** 5678 Saldo disponible $');
+    this.creditCardBalance = page.getByText('45.000,00');
+    this.restoreBalanceButton = page.getByRole('button', { name: 'Restablecer Saldos' });
+    this.restoreBalancedHeading = page.getByRole('heading', { name: 'Restablecer Simulador' });
+    this.restoreBalanceConfirm = page.getByRole('button', { name: 'Confirmar' });
     this.latestTransactionsHeading = page.getByRole('heading', { name: 'Últimos Movimientos' });
     this.latestTransaction = page.getByText('Transferencia recibida').first();
     this.latestTransactionDate = page.getByText('Ayer');
@@ -70,6 +88,47 @@ export class DashboardPage extends BasePage {
       transaction.transaction.expectedDate,
       this.latestTransactionAmmount,
       transaction.transaction.expectedAmmount,
+    );
+  }
+
+  protected async validateBalance(
+    checkingAccountBalance: Locator,
+    expectedAccountBalance: string,
+    savingsBankBalance: Locator,
+    expectedSavBankBalance: string,
+    creditCardBalance: Locator,
+    expectedCardBalance: string,
+  ) {
+    await expect(checkingAccountBalance).toHaveText(expectedAccountBalance);
+    await expect(savingsBankBalance).toHaveText(expectedSavBankBalance);
+    await expect(creditCardBalance).toHaveText(expectedCardBalance);
+  }
+
+  async validateCurrentBalance() {
+    await this.validateBalance(
+      this.checkingAccountBalance,
+      balance.current.expectedAccountBalance,
+      this.savingsBankBalance,
+      balance.current.expectedSavBankBalance,
+      this.creditCardBalance,
+      balance.current.expectedCardBalance,
+    );
+  }
+
+  async restoreBalance() {
+    await this.restoreBalanceButton.click();
+    await expect(this.restoreBalancedHeading).toBeVisible();
+    await this.restoreBalanceConfirm.click();
+  }
+
+  async validateDefaultBalance() {
+    await this.validateBalance(
+      this.defaultAccountBalance,
+      defaultBalance.default.expectedAccountBalance,
+      this.defaultSavingsBalance,
+      defaultBalance.default.expectedSavBankBalance,
+      this.creditCardBalance,
+      defaultBalance.default.expectedCardBalance,
     );
   }
 }

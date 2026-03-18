@@ -16,7 +16,13 @@ test.describe('Dashboard - Feature', () => {
     await loggedInDashboard.validateMostRecentTransaction();
   });
 
-  test('Should validate default balance values', async ({ basePage, loggedInDashboard }) => {
+  test('Should validate current and default balance values', async ({
+    basePage,
+    loggedInDashboard,
+  }) => {
     await basePage.validateLoaded(loggedInDashboard.dashboardTitle);
+    await loggedInDashboard.validateCurrentBalance();
+    await loggedInDashboard.restoreBalance();
+    await loggedInDashboard.validateDefaultBalance();
   });
 });
