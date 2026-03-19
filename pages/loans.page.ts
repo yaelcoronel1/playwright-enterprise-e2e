@@ -28,13 +28,28 @@ export class LoansPage extends BasePage {
     this.homeSection = page.getByRole('listitem').filter({ hasText: 'Inicio' });
   }
 
-  async loanApplication() {
-    await this.loanAmmountField.fill(loan.ammounts.newLoan);
-    await this.loanInstallments.selectOption(loan.installments.twelve);
-    await this.loanApplyButton.click();
+  protected async loan(loanAmmount: string, loanInstallments: string) {
+    await this.loanAmmountField.fill(loanAmmount);
+    await this.loanInstallments.selectOption(loanInstallments);
+    await this.loanApplyButton.scrollIntoViewIfNeeded();
     await this.loanApplyButton.click();
     await expect(this.loanConfirmHeading).toBeVisible();
     await this.loanConfirmButton.click();
+  }
+
+  protected async loanLimit(loanAmmount: string, loanInstallments: string) {
+    await this.loanAmmountField.fill(loanAmmount);
+    await this.loanInstallments.selectOption(loanInstallments);
+    await this.loanApplyButton.scrollIntoViewIfNeeded();
+    await this.loanApplyButton.click();
+  }
+
+  async loanApplication() {
+    await this.loan(loan.ammounts.newLoan, loan.installments.twelve);
+  }
+
+  async loanApplicationLimit() {
+    await this.loanLimit(loan.ammounts.limitAmmount, loan.installments.twelve);
   }
 
   protected async validateLoan(
@@ -58,5 +73,9 @@ export class LoansPage extends BasePage {
     );
     await this.homeSection.click();
     return new DashboardPage(this.page);
+  }
+
+  async loanConfirmNotToExist() {
+    await expect(this.loanConfirmHeading).toBeHidden();
   }
 }

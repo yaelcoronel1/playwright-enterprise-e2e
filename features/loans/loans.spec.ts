@@ -12,4 +12,13 @@ test.describe('Loans - Feature', () => {
     const returnedDashboardPage = await loansPage.validateNewLoan();
     await returnedDashboardPage.validateBalanceAfterLoan();
   });
+
+  test('Should not be able to apply for beyond the max loan ammount', async ({
+    basePage,
+    loansPage,
+  }) => {
+    await basePage.validateLoaded(loansPage.loansPageHeading);
+    await loansPage.loanApplicationLimit();
+    await loansPage.loanConfirmNotToExist();
+  });
 });
