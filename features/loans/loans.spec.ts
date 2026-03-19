@@ -22,9 +22,13 @@ test.describe('Loans - Feature', () => {
     await loansPage.loanConfirmNotToExist();
   });
 
-  test('Should be able to make a loan settlement', async ({ basePage, loansPage }) => {
+  test('Should be able to see the loan withdrawal button if the loan is recent', async ({
+    basePage,
+    loansPage,
+  }) => {
     await basePage.validateLoaded(loansPage.loansPageHeading);
+    await loansPage.withdrawalButtonHidden();
     await loansPage.loanApplication();
-    await loansPage.loanSettlementPayment();
+    await loansPage.withdrawalButtonVisible();
   });
 });

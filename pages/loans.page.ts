@@ -17,6 +17,7 @@ export class LoansPage extends BasePage {
   readonly settleLoanHeading: Locator;
   readonly ammountToPay: Locator;
   readonly confirmSettlementButton: Locator;
+  readonly loanWithdrawalButton: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -34,6 +35,7 @@ export class LoansPage extends BasePage {
     this.settleLoanHeading = page.getByRole('heading', { name: 'Cancelar Préstamo' });
     this.ammountToPay = page.getByText('$ 165.000,00', { exact: true });
     this.confirmSettlementButton = page.getByRole('button', { name: 'Confirmar' });
+    this.loanWithdrawalButton = page.getByRole('button', { name: 'Desistir' });
   }
 
   protected async loan(loanAmmount: string, loanInstallments: string) {
@@ -93,5 +95,13 @@ export class LoansPage extends BasePage {
 
   async loanSettlementPayment() {
     await this.loanSettlement(loan.ammounts.ammountToPay);
+  }
+
+  async withdrawalButtonHidden() {
+    await expect(this.loanWithdrawalButton).toBeHidden();
+  }
+
+  async withdrawalButtonVisible() {
+    await expect(this.loanWithdrawalButton).toBeVisible();
   }
 }
