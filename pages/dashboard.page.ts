@@ -102,6 +102,16 @@ export class DashboardPage extends BasePage {
     await expect(this.creditCardBalance).toHaveText(expectedCardBalance);
   }
 
+  protected async validateRestoredBalance(
+    expectedAccountBalance: string,
+    expectedSavBankBalance: string,
+    expectedCardBalance: string,
+  ) {
+    await expect(this.defaultAccountBalance).toHaveText(expectedAccountBalance);
+    await expect(this.defaultSavingsBalance).toHaveText(expectedSavBankBalance);
+    await expect(this.creditCardBalance).toHaveText(expectedCardBalance);
+  }
+
   async validateCurrentBalance() {
     await this.validateBalance(
       balance.current.expectedAccountBalance,
@@ -117,7 +127,7 @@ export class DashboardPage extends BasePage {
   }
 
   async validateDefaultBalance() {
-    await this.validateBalance(
+    await this.validateRestoredBalance(
       balance.default.expectedAccountBalance,
       balance.default.expectedSavBankBalance,
       balance.default.expectedCardBalance,
