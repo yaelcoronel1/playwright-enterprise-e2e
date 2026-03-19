@@ -18,6 +18,9 @@ export class LoansPage extends BasePage {
   readonly ammountToPay: Locator;
   readonly confirmSettlementButton: Locator;
   readonly loanWithdrawalButton: Locator;
+  readonly loanWithdrawalHeading: Locator;
+  readonly loanWithdrawalAmmount: Locator;
+  readonly withdrawalConfirmButton: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -36,6 +39,9 @@ export class LoansPage extends BasePage {
     this.ammountToPay = page.getByText('$ 165.000,00', { exact: true });
     this.confirmSettlementButton = page.getByRole('button', { name: 'Confirmar' });
     this.loanWithdrawalButton = page.getByRole('button', { name: 'Desistir' });
+    this.loanWithdrawalHeading = page.getByRole('heading', { name: 'Desistir del Préstamo' });
+    this.loanWithdrawalAmmount = page.locator('#modal-body').getByText('$ 50.000,00');
+    this.withdrawalConfirmButton = page.getByRole('button', { name: 'Confirmar' });
   }
 
   protected async loan(loanAmmount: string, loanInstallments: string) {
@@ -103,5 +109,20 @@ export class LoansPage extends BasePage {
 
   async withdrawalButtonVisible() {
     await expect(this.loanWithdrawalButton).toBeVisible();
+  }
+
+  async loanWithdrawal() {
+    await this.loan(loan.ammounts.withdrawalLoan, loan.installments.twelve);
+    await this.withdrawalButtonVisible();
+    await this.loanWithdrawalButton.click();
+    await expect(this.loanWithdrawalHeading).toBeVisible();
+    await expect(this.loanWithdrawalAmmount).toHaveText(loan.ammounts.withdrawalLoanVisible);
+    await this.withdrawalConfirmButton.click();
+    await this.withdrawalButtonHidden();
+  }
+
+  async validateLoanWithdrawal() {
+    await this.homeSection.click();
+    return new DashboardPage(this.page);
   }
 }

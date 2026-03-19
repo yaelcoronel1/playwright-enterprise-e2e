@@ -31,4 +31,11 @@ test.describe('Loans - Feature', () => {
     await loansPage.loanApplication();
     await loansPage.withdrawalButtonVisible();
   });
+
+  test('Should be able to request a loan withdrawal', async ({ basePage, loansPage }) => {
+    await basePage.validateLoaded(loansPage.loansPageHeading);
+    await loansPage.loanWithdrawal();
+    const returnedDashboardPage = await loansPage.validateLoanWithdrawal();
+    await returnedDashboardPage.validateLoanWithdrawal();
+  });
 });

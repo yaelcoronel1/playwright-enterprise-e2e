@@ -1,6 +1,8 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
 import { DashboardPage } from './dashboard.page';
+import { users } from '../test-data/authentication/credentials';
+import { errors } from '../test-data/authentication/error-messages';
 
 export class LoginPage extends BasePage {
   readonly usernameInput: Locator;
@@ -21,7 +23,7 @@ export class LoginPage extends BasePage {
     this.blockMsg = page.getByText('Tu cuenta ha sido bloqueada');
   }
 
-  async login(username: string, password: string) {
+  protected async login(username: string, password: string) {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
@@ -29,13 +31,33 @@ export class LoginPage extends BasePage {
     return dashboardPage;
   }
 
-  async validateError(expectedMessage: string) {
+  async validLogin() {
+    await this.login(users.valid.username, users.valid.password);
+  }
+
+  async invalidLogin() {
+    await this.login(users.invalid.username, users.invalid.password);
+  }
+
+  async lockedLogin() {
+    await this.login(users.locked.username, users.locked.password);
+  }
+
+  protected async validateError(expectedMessage: string) {
     await expect(this.invalidLoginMsg).toBeVisible();
     await expect(this.invalidLoginMsg).toContainText(expectedMessage);
   }
 
-  async validateBlock(expectedMessage: string) {
+  async errorIsVisible() {
+    await this.validateError(errors.error.msg);
+  }
+
+  protected async validateBlock(expectedMessage: string) {
     await expect(this.blockMsg).toBeVisible();
     await expect(this.blockMsg).toContainText(expectedMessage);
+  }
+
+  async blockMessageIsVisible() {
+    await this.validateBlock(errors.block.msg);
   }
 }
