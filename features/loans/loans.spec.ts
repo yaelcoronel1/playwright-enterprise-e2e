@@ -21,4 +21,10 @@ test.describe('Loans - Feature', () => {
     await loansPage.loanApplicationLimit();
     await loansPage.loanConfirmNotToExist();
   });
+
+  test('Should be able to make a loan settlement', async ({ basePage, loansPage }) => {
+    await basePage.validateLoaded(loansPage.loansPageHeading);
+    await loansPage.loanApplication();
+    await loansPage.loanSettlementPayment();
+  });
 });

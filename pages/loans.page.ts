@@ -13,6 +13,10 @@ export class LoansPage extends BasePage {
   readonly loanConfirmButton: Locator;
   readonly newLoanAmmount: Locator;
   readonly newLoanInstallments: Locator;
+  readonly settleLoanButton: Locator;
+  readonly settleLoanHeading: Locator;
+  readonly ammountToPay: Locator;
+  readonly confirmSettlementButton: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -26,6 +30,10 @@ export class LoansPage extends BasePage {
     this.newLoanAmmount = page.locator('#active-loans-list').getByText('$ 100.000,00');
     this.newLoanInstallments = page.getByText('Cuotas:').nth(1);
     this.homeSection = page.getByRole('listitem').filter({ hasText: 'Inicio' });
+    this.settleLoanButton = page.getByRole('button', { name: 'Pagar Total' }).nth(1);
+    this.settleLoanHeading = page.getByRole('heading', { name: 'Cancelar Préstamo' });
+    this.ammountToPay = page.getByText('$ 165.000,00', { exact: true });
+    this.confirmSettlementButton = page.getByRole('button', { name: 'Confirmar' });
   }
 
   protected async loan(loanAmmount: string, loanInstallments: string) {
@@ -52,30 +60,38 @@ export class LoansPage extends BasePage {
     await this.loanLimit(loan.ammounts.limitAmmount, loan.installments.twelve);
   }
 
-  protected async validateLoan(
-    loanAmmount: Locator,
-    expectedLoanAmmount: string,
-    installments: Locator,
-    expectedInstallments: string,
-  ) {
-    await expect(loanAmmount).toBeVisible();
-    await expect(loanAmmount).toHaveText(expectedLoanAmmount);
-    await expect(installments).toBeVisible();
-    await expect(installments).toHaveText(expectedInstallments);
+  protected async validateLoan(expectedLoanAmmount: string, expectedInstallments: string) {
+    await expect(this.newLoanAmmount).toBeVisible();
+    await expect(this.newLoanAmmount).toHaveText(expectedLoanAmmount);
+    await expect(this.newLoanInstallments).toBeVisible();
+    await expect(this.newLoanInstallments).toHaveText(expectedInstallments);
+  }
+
+  protected async validateLoanToBeHidden() {
+    await expect(this.newLoanAmmount).toBeHidden();
+    await expect(this.newLoanInstallments).toBeHidden();
   }
 
   async validateNewLoan() {
-    await this.validateLoan(
-      this.newLoanAmmount,
-      loan.ammounts.newLoanVisible,
-      this.newLoanInstallments,
-      loan.installments.visibleInstallments,
-    );
+    await this.validateLoan(loan.ammounts.newLoanVisible, loan.installments.visibleInstallments);
     await this.homeSection.click();
     return new DashboardPage(this.page);
   }
 
   async loanConfirmNotToExist() {
     await expect(this.loanConfirmHeading).toBeHidden();
+  }
+
+  protected async loanSettlement(ammountToPay: string) {
+    await this.validateLoan(loan.ammounts.newLoanVisible, loan.installments.visibleInstallments);
+    await this.settleLoanButton.click();
+    await expect(this.settleLoanHeading).toBeVisible();
+    await expect(this.ammountToPay).toHaveText(ammountToPay);
+    await this.confirmSettlementButton.click();
+    await this.validateLoanToBeHidden();
+  }
+
+  async loanSettlementPayment() {
+    await this.loanSettlement(loan.ammounts.ammountToPay);
   }
 }
