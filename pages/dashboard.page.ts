@@ -4,6 +4,8 @@ import { LoginPage } from './login.page';
 import { transaction } from '../test-data/dashboard/recent-transaction';
 import { balance } from '../test-data/dashboard/current-balance';
 import { defaultBalance } from '../test-data/dashboard/default-balance';
+import { LoansPage } from './loans.page';
+import { loan } from '../test-data/loan/loan-application';
 
 export class DashboardPage extends BasePage {
   readonly dashboardTitle: Locator;
@@ -25,6 +27,8 @@ export class DashboardPage extends BasePage {
   readonly latestTransaction: Locator;
   readonly latestTransactionDate: Locator;
   readonly latestTransactionAmmount: Locator;
+  readonly loanSection: Locator;
+  readonly accBalanceAfterLoan: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -50,6 +54,8 @@ export class DashboardPage extends BasePage {
     this.latestTransaction = page.getByText('Transferencia recibida').first();
     this.latestTransactionDate = page.getByText('Ayer');
     this.latestTransactionAmmount = page.getByText('+$ 15.000,00');
+    this.loanSection = page.getByRole('listitem').filter({ hasText: 'Préstamos' });
+    this.accBalanceAfterLoan = page.getByText('225.450,75');
   }
 
   async logout() {
@@ -130,5 +136,18 @@ export class DashboardPage extends BasePage {
       this.creditCardBalance,
       defaultBalance.default.expectedCardBalance,
     );
+  }
+
+  async goToLoansPage() {
+    await this.loanSection.click();
+    return new LoansPage(this.page);
+  }
+
+  protected async validateBalanceOnly(newAccountBalance: Locator, expectedAccountBalance: string) {
+    await expect(newAccountBalance).toHaveText(expectedAccountBalance);
+  }
+
+  async validateBalanceAfterLoan() {
+    await this.validateBalanceOnly(this.accBalanceAfterLoan, loan.ammounts.afterLoan);
   }
 }

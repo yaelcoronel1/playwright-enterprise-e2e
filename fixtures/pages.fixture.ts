@@ -3,12 +3,14 @@ import { BasePage } from '../pages/base.page';
 import { LoginPage } from '../pages/login.page';
 import { DocumentationPanel } from '../pages/documentation.panel';
 import { DashboardPage } from '../pages/dashboard.page';
+import { LoansPage } from '../pages/loans.page';
 
 type Pages = {
   basePage: BasePage;
   loginPage: LoginPage;
   documentationPanel: DocumentationPanel;
   dashboardPage: DashboardPage;
+  loansPage: LoansPage;
 };
 
 export const test = base.extend<Pages>({
@@ -26,6 +28,10 @@ export const test = base.extend<Pages>({
 
   dashboardPage: async ({ page }, use) => {
     await use(new DashboardPage(page));
+  },
+
+  loansPage: async ({ page }, use) => {
+    await use(new LoansPage(page));
   },
 });
 
