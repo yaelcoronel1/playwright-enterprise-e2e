@@ -6,6 +6,7 @@ import { DashboardPage } from './dashboard.page';
 export class LoansPage extends BasePage {
   readonly loansPageHeading: Locator;
   readonly homeSection: Locator;
+  readonly loanAccountDropdown: Locator;
   readonly loanAmmountField: Locator;
   readonly loanInstallments: Locator;
   readonly loanApplyButton: Locator;
@@ -42,9 +43,15 @@ export class LoansPage extends BasePage {
     this.loanWithdrawalHeading = page.getByRole('heading', { name: 'Desistir del Préstamo' });
     this.loanWithdrawalAmmount = page.locator('#modal-body').getByText('$ 50.000,00');
     this.withdrawalConfirmButton = page.getByRole('button', { name: 'Confirmar' });
+    this.loanAccountDropdown = page.locator('#loan-destination-account');
   }
 
-  protected async loan(loanAmmount: string, loanInstallments: string) {
+  protected async loan(
+    checkingAccountOption: string,
+    loanAmmount: string,
+    loanInstallments: string,
+  ) {
+    await this.loanAccountDropdown.selectOption(checkingAccountOption);
     await this.loanAmmountField.fill(loanAmmount);
     await this.loanInstallments.selectOption(loanInstallments);
     await this.loanApplyButton.scrollIntoViewIfNeeded();
@@ -53,7 +60,12 @@ export class LoansPage extends BasePage {
     await this.loanConfirmButton.click();
   }
 
-  protected async loanLimit(loanAmmount: string, loanInstallments: string) {
+  protected async loanLimit(
+    checkingAccountOption: string,
+    loanAmmount: string,
+    loanInstallments: string,
+  ) {
+    await this.loanAccountDropdown.selectOption(checkingAccountOption);
     await this.loanAmmountField.fill(loanAmmount);
     await this.loanInstallments.selectOption(loanInstallments);
     await this.loanApplyButton.scrollIntoViewIfNeeded();
@@ -61,11 +73,15 @@ export class LoansPage extends BasePage {
   }
 
   async loanApplication() {
-    await this.loan(loan.ammounts.newLoan, loan.installments.twelve);
+    await this.loan(loan.accounts.checkingAccount, loan.ammounts.newLoan, loan.installments.twelve);
   }
 
   async loanApplicationLimit() {
-    await this.loanLimit(loan.ammounts.limitAmmount, loan.installments.twelve);
+    await this.loanLimit(
+      loan.accounts.checkingAccount,
+      loan.ammounts.limitAmmount,
+      loan.installments.twelve,
+    );
   }
 
   protected async validateLoan(expectedLoanAmmount: string, expectedInstallments: string) {
@@ -112,7 +128,11 @@ export class LoansPage extends BasePage {
   }
 
   async loanWithdrawal() {
-    await this.loan(loan.ammounts.withdrawalLoan, loan.installments.twelve);
+    await this.loan(
+      loan.accounts.checkingAccount,
+      loan.ammounts.withdrawalLoan,
+      loan.installments.twelve,
+    );
     await this.withdrawalButtonVisible();
     await this.loanWithdrawalButton.click();
     await expect(this.loanWithdrawalHeading).toBeVisible();

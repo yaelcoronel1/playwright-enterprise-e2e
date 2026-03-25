@@ -1,4 +1,8 @@
 export const loan = {
+  accounts: {
+    checkingAccount: 'Cuenta Corriente **** **** **** 1234',
+  },
+
   ammounts: {
     newLoan: '100000',
     newLoanVisible: '$ 100.000,00',
