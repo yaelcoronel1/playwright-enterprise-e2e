@@ -5,6 +5,7 @@ import { transaction } from '../test-data/dashboard/recent-transaction';
 import { balance } from '../test-data/dashboard/balance';
 import { LoansPage } from './loans.page';
 import { loan } from '../test-data/loan/loan-application';
+import { TransfersPage } from './transfers.page';
 
 export class DashboardPage extends BasePage {
   readonly dashboardTitle: Locator;
@@ -27,6 +28,8 @@ export class DashboardPage extends BasePage {
   readonly latestTransactionDate: Locator;
   readonly latestTransactionAmmount: Locator;
   readonly loanSection: Locator;
+  readonly transferSection: Locator;
+  readonly personalTransfer: Locator;
   readonly accBalanceAfterLoan: Locator;
   readonly loanWithdrawal: Locator;
 
@@ -57,6 +60,8 @@ export class DashboardPage extends BasePage {
     this.loanSection = page.getByRole('listitem').filter({ hasText: 'Préstamos' });
     this.accBalanceAfterLoan = page.getByText('225.450,75');
     this.loanWithdrawal = page.getByText('Desistimiento de Préstamo (Revocación) Hoy -$ 50.000,00');
+    this.transferSection = page.getByRole('listitem').filter({ hasText: 'Transferencias' });
+    this.personalTransfer = page.getByText('Transferencia entre cuentas propias Hoy +$');
   }
 
   async logout() {
@@ -150,5 +155,15 @@ export class DashboardPage extends BasePage {
   async validateLoanWithdrawal() {
     await expect(this.loanWithdrawal).toBeVisible();
     await expect(this.loanWithdrawal).toHaveText(transaction.transaction.loanWithdrawal);
+  }
+
+  async goToTransfersPage() {
+    await this.transferSection.click();
+    return new TransfersPage(this.page);
+  }
+
+  async validatePersonalTransfer() {
+    await this.personalTransfer.scrollIntoViewIfNeeded();
+    await expect(this.personalTransfer).toBeVisible();
   }
 }
