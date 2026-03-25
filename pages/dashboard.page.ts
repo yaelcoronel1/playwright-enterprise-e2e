@@ -2,8 +2,9 @@ import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
 import { LoginPage } from './login.page';
 import { transaction } from '../test-data/dashboard/recent-transaction';
-import { balance } from '../test-data/dashboard/current-balance';
-import { defaultBalance } from '../test-data/dashboard/default-balance';
+import { balance } from '../test-data/dashboard/balance';
+import { LoansPage } from './loans.page';
+import { loan } from '../test-data/loan/loan-application';
 
 export class DashboardPage extends BasePage {
   readonly dashboardTitle: Locator;
@@ -25,6 +26,9 @@ export class DashboardPage extends BasePage {
   readonly latestTransaction: Locator;
   readonly latestTransactionDate: Locator;
   readonly latestTransactionAmmount: Locator;
+  readonly loanSection: Locator;
+  readonly accBalanceAfterLoan: Locator;
+  readonly loanWithdrawal: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -50,6 +54,9 @@ export class DashboardPage extends BasePage {
     this.latestTransaction = page.getByText('Transferencia recibida').first();
     this.latestTransactionDate = page.getByText('Ayer');
     this.latestTransactionAmmount = page.getByText('+$ 15.000,00');
+    this.loanSection = page.getByRole('listitem').filter({ hasText: 'Préstamos' });
+    this.accBalanceAfterLoan = page.getByText('225.450,75');
+    this.loanWithdrawal = page.getByText('Desistimiento de Préstamo (Revocación) Hoy -$ 50.000,00');
   }
 
   async logout() {
@@ -67,50 +74,48 @@ export class DashboardPage extends BasePage {
   }
 
   protected async validateIndividualTransaction(
-    transaction: Locator,
     expectedTransaction: string,
-    date: Locator,
     expectedDate: string,
-    ammount: Locator,
     expectedAmmount: string,
   ) {
-    await expect(transaction).toHaveText(expectedTransaction);
-    await expect(date).toHaveText(expectedDate);
-    await expect(ammount).toHaveText(expectedAmmount);
+    await expect(this.latestTransaction).toHaveText(expectedTransaction);
+    await expect(this.latestTransactionDate).toHaveText(expectedDate);
+    await expect(this.latestTransactionAmmount).toHaveText(expectedAmmount);
   }
 
   async validateMostRecentTransaction() {
     await expect(this.latestTransactionsHeading).toBeVisible();
     await this.validateIndividualTransaction(
-      this.latestTransaction,
       transaction.transaction.expectedTransaction,
-      this.latestTransactionDate,
       transaction.transaction.expectedDate,
-      this.latestTransactionAmmount,
       transaction.transaction.expectedAmmount,
     );
   }
 
   protected async validateBalance(
-    checkingAccountBalance: Locator,
     expectedAccountBalance: string,
-    savingsBankBalance: Locator,
     expectedSavBankBalance: string,
-    creditCardBalance: Locator,
     expectedCardBalance: string,
   ) {
-    await expect(checkingAccountBalance).toHaveText(expectedAccountBalance);
-    await expect(savingsBankBalance).toHaveText(expectedSavBankBalance);
-    await expect(creditCardBalance).toHaveText(expectedCardBalance);
+    await expect(this.checkingAccountBalance).toHaveText(expectedAccountBalance);
+    await expect(this.savingsBankBalance).toHaveText(expectedSavBankBalance);
+    await expect(this.creditCardBalance).toHaveText(expectedCardBalance);
+  }
+
+  protected async validateRestoredBalance(
+    expectedAccountBalance: string,
+    expectedSavBankBalance: string,
+    expectedCardBalance: string,
+  ) {
+    await expect(this.defaultAccountBalance).toHaveText(expectedAccountBalance);
+    await expect(this.defaultSavingsBalance).toHaveText(expectedSavBankBalance);
+    await expect(this.creditCardBalance).toHaveText(expectedCardBalance);
   }
 
   async validateCurrentBalance() {
     await this.validateBalance(
-      this.checkingAccountBalance,
       balance.current.expectedAccountBalance,
-      this.savingsBankBalance,
       balance.current.expectedSavBankBalance,
-      this.creditCardBalance,
       balance.current.expectedCardBalance,
     );
   }
@@ -122,13 +127,28 @@ export class DashboardPage extends BasePage {
   }
 
   async validateDefaultBalance() {
-    await this.validateBalance(
-      this.defaultAccountBalance,
-      defaultBalance.default.expectedAccountBalance,
-      this.defaultSavingsBalance,
-      defaultBalance.default.expectedSavBankBalance,
-      this.creditCardBalance,
-      defaultBalance.default.expectedCardBalance,
+    await this.validateRestoredBalance(
+      balance.default.expectedAccountBalance,
+      balance.default.expectedSavBankBalance,
+      balance.default.expectedCardBalance,
     );
+  }
+
+  async goToLoansPage() {
+    await this.loanSection.click();
+    return new LoansPage(this.page);
+  }
+
+  protected async validateBalanceOnly(expectedAccountBalance: string) {
+    await expect(this.accBalanceAfterLoan).toHaveText(expectedAccountBalance);
+  }
+
+  async validateBalanceAfterLoan() {
+    await this.validateBalanceOnly(loan.ammounts.afterLoan);
+  }
+
+  async validateLoanWithdrawal() {
+    await expect(this.loanWithdrawal).toBeVisible();
+    await expect(this.loanWithdrawal).toHaveText(transaction.transaction.loanWithdrawal);
   }
 }
