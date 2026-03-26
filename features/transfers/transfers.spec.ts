@@ -20,4 +20,17 @@ test.describe('Transfers - Feature', () => {
     await basePage.validateLoaded(transfersPage.transfersPageHeading);
     await transfersPage.transferLimit();
   });
+
+  test.only('Should not be able to transfer beyond the limit daily ammount', async ({
+    basePage,
+    transfersPage,
+  }) => {
+    await basePage.validateLoaded(transfersPage.transfersPageHeading);
+    await transfersPage.dailyTransferLimit();
+    await transfersPage.dailyTransferLimit();
+    const returnedDashboardPage = await transfersPage.goToMainPage();
+    await returnedDashboardPage.validateTwoTransfers();
+    const returnedTransfersPage = await returnedDashboardPage.goToTransfersPage();
+    await returnedTransfersPage.validateDailyTransferLimit();
+  });
 });

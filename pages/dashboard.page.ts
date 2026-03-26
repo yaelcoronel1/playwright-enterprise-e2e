@@ -32,6 +32,7 @@ export class DashboardPage extends BasePage {
   readonly personalTransfer: Locator;
   readonly accBalanceAfterLoan: Locator;
   readonly loanWithdrawal: Locator;
+  readonly balanceAfterTwoTransfers: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -62,6 +63,7 @@ export class DashboardPage extends BasePage {
     this.loanWithdrawal = page.getByText('Desistimiento de Préstamo (Revocación) Hoy -$ 50.000,00');
     this.transferSection = page.getByRole('listitem').filter({ hasText: 'Transferencias' });
     this.personalTransfer = page.getByText('Transferencia entre cuentas propias Hoy +$');
+    this.balanceAfterTwoTransfers = page.getByText('169.320,50', { exact: true });
   }
 
   async logout() {
@@ -165,5 +167,9 @@ export class DashboardPage extends BasePage {
   async validatePersonalTransfer() {
     await this.personalTransfer.scrollIntoViewIfNeeded();
     await expect(this.personalTransfer).toBeVisible();
+  }
+
+  async validateTwoTransfers() {
+    await expect(this.balanceAfterTwoTransfers).toBeVisible();
   }
 }

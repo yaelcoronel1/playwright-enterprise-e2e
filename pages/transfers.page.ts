@@ -14,6 +14,8 @@ export class TransfersPage extends BasePage {
   readonly transferConfirmationHeading: Locator;
   readonly transferConfirmationButton: Locator;
   readonly limitTransferError: Locator;
+  readonly dailyLimitError: Locator;
+  readonly transferConfirmationMessage: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -30,6 +32,8 @@ export class TransfersPage extends BasePage {
     });
     this.transferConfirmationButton = page.getByRole('button', { name: 'Confirmar' });
     this.limitTransferError = page.getByText('El monto máximo por');
+    this.dailyLimitError = page.getByText('Has excedido el límite diario');
+    this.transferConfirmationMessage = page.getByText('Transferencia realizada');
   }
 
   protected async transfer(
@@ -40,12 +44,15 @@ export class TransfersPage extends BasePage {
   ) {
     await this.transferTypeField.selectOption(type);
     await this.sourceAccountField.selectOption(sourceAccount);
+    await expect(this.destinationAccountField).toBeEnabled();
     await this.destinationAccountField.selectOption(destinationAccount);
+    await expect(this.transferAmmountField).toBeEnabled();
     await this.transferAmmountField.fill(transferAmmount);
     await this.transferButton.scrollIntoViewIfNeeded();
     await this.transferButton.click();
     await expect(this.transferConfirmationHeading).toBeVisible();
     await this.transferConfirmationButton.click();
+    await expect(this.transferConfirmationMessage).toBeVisible();
   }
 
   protected async limitTransfer(
@@ -56,13 +63,36 @@ export class TransfersPage extends BasePage {
   ) {
     await this.transferTypeField.selectOption(type);
     await this.sourceAccountField.selectOption(sourceAccount);
+    await expect(this.destinationAccountField).toBeEnabled();
     await this.destinationAccountField.selectOption(destinationAccount);
+    await expect(this.transferAmmountField).toBeEnabled();
     await this.transferAmmountField.fill(transferAmmount);
     await this.transferButton.scrollIntoViewIfNeeded();
     await this.transferButton.click();
     await expect(this.transferConfirmationHeading).toBeVisible();
     await this.transferConfirmationButton.click();
     await expect(this.limitTransferError).toBeVisible();
+  }
+
+  protected async dailyLimit(
+    type: string,
+    sourceAccount: string,
+    destinationAccount: string,
+    transferAmmount: string,
+  ) {
+    await this.transferTypeField.selectOption(type);
+    await this.sourceAccountField.selectOption(sourceAccount);
+    await expect(this.destinationAccountField).toBeEnabled();
+    await expect(this.transfersPageHeading).toBeVisible();
+    await expect(this.transferButton).toBeEnabled();
+    await this.destinationAccountField.selectOption(destinationAccount);
+    await expect(this.transferAmmountField).toBeEnabled();
+    await this.transferAmmountField.fill(transferAmmount);
+    await this.transferButton.scrollIntoViewIfNeeded();
+    await this.transferButton.click();
+    await expect(this.transferConfirmationHeading).toBeVisible();
+    await this.transferConfirmationButton.click();
+    await expect(this.dailyLimitError).toBeVisible();
   }
 
   async personalTransfer() {
@@ -75,6 +105,7 @@ export class TransfersPage extends BasePage {
   }
 
   async goToMainPage() {
+    await this.homeSection.scrollIntoViewIfNeeded();
     await this.homeSection.click();
     return new DashboardPage(this.page);
   }
@@ -85,6 +116,24 @@ export class TransfersPage extends BasePage {
       transfer.sourceAccount.checkingAccount,
       transfer.destinationAccount.savingsAccount,
       transfer.transferAmmount.limitTransferAmmount,
+    );
+  }
+
+  async dailyTransferLimit() {
+    await this.transfer(
+      transfer.type.personalTransfer,
+      transfer.sourceAccount.checkingAccount,
+      transfer.destinationAccount.savingsAccount,
+      transfer.transferAmmount.dailyLimitedAmmount,
+    );
+  }
+
+  async validateDailyTransferLimit() {
+    await this.dailyLimit(
+      transfer.type.personalTransfer,
+      transfer.sourceAccount.checkingAccount,
+      transfer.destinationAccount.savingsAccount,
+      transfer.transferAmmount.dailyLimitedAmmount,
     );
   }
 }
