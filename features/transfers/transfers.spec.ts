@@ -21,7 +21,7 @@ test.describe('Transfers - Feature', () => {
     await transfersPage.transferLimit();
   });
 
-  test.only('Should not be able to transfer beyond the limit daily ammount', async ({
+  test('Should not be able to transfer beyond the limit daily ammount', async ({
     basePage,
     transfersPage,
   }) => {
@@ -32,5 +32,10 @@ test.describe('Transfers - Feature', () => {
     await returnedDashboardPage.validateTwoTransfers();
     const returnedTransfersPage = await returnedDashboardPage.goToTransfersPage();
     await returnedTransfersPage.validateDailyTransferLimit();
+  });
+
+  test('Should not be able to provide an invalid ABA', async ({ basePage, transfersPage }) => {
+    await basePage.validateLoaded(transfersPage.transfersPageHeading);
+    await transfersPage.validateInvalidAba();
   });
 });

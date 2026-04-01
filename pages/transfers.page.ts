@@ -16,6 +16,9 @@ export class TransfersPage extends BasePage {
   readonly limitTransferError: Locator;
   readonly dailyLimitError: Locator;
   readonly transferConfirmationMessage: Locator;
+  readonly abaField: Locator;
+  readonly invalidAbaError: Locator;
+  readonly sameAccountInFieldsError: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -34,6 +37,9 @@ export class TransfersPage extends BasePage {
     this.limitTransferError = page.getByText('El monto máximo por');
     this.dailyLimitError = page.getByText('Has excedido el límite diario');
     this.transferConfirmationMessage = page.getByText('Transferencia realizada');
+    this.abaField = page.getByRole('textbox', { name: 'CBU/Alias destino' });
+    this.invalidAbaError = page.getByText('CBU o Alias de destino no vá');
+    this.sameAccountInFieldsError = page.getByText('La cuenta origen y destino no');
   }
 
   protected async transfer(
@@ -90,9 +96,31 @@ export class TransfersPage extends BasePage {
     await this.transferAmmountField.fill(transferAmmount);
     await this.transferButton.scrollIntoViewIfNeeded();
     await this.transferButton.click();
+    await expect(this.sameAccountInFieldsError).toBeVisible();
+    await this.destinationAccountField.selectOption(destinationAccount);
+    await this.transferButton.click();
     await expect(this.transferConfirmationHeading).toBeVisible();
     await this.transferConfirmationButton.click();
     await expect(this.dailyLimitError).toBeVisible();
+  }
+
+  protected async invalidAbaTransfer(
+    type: string,
+    sourceAccount: string,
+    invalidAba: string,
+    transferAmmount: string,
+  ) {
+    await this.transferTypeField.selectOption(type);
+    await this.sourceAccountField.selectOption(sourceAccount);
+    await expect(this.abaField).toBeEnabled();
+    await this.abaField.fill(invalidAba);
+    await expect(this.transferAmmountField).toBeEnabled();
+    await this.transferAmmountField.fill(transferAmmount);
+    await this.transferButton.scrollIntoViewIfNeeded();
+    await this.transferButton.click();
+    await expect(this.transferConfirmationHeading).toBeVisible();
+    await this.transferConfirmationButton.click();
+    await expect(this.invalidAbaError).toBeVisible();
   }
 
   async personalTransfer() {
@@ -134,6 +162,15 @@ export class TransfersPage extends BasePage {
       transfer.sourceAccount.checkingAccount,
       transfer.destinationAccount.savingsAccount,
       transfer.transferAmmount.dailyLimitedAmmount,
+    );
+  }
+
+  async validateInvalidAba() {
+    await this.invalidAbaTransfer(
+      transfer.type.externalTransfer,
+      transfer.sourceAccount.checkingAccount,
+      transfer.destinationAccount.invalidAba,
+      transfer.transferAmmount.personalTransferAmmount,
     );
   }
 }
