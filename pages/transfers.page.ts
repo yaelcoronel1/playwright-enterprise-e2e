@@ -13,12 +13,10 @@ export class TransfersPage extends BasePage {
   readonly transferButton: Locator;
   readonly transferConfirmationHeading: Locator;
   readonly transferConfirmationButton: Locator;
-  readonly limitTransferError: Locator;
-  readonly dailyLimitError: Locator;
   readonly transferConfirmationMessage: Locator;
+  readonly limitTransferError: Locator;
   readonly abaField: Locator;
   readonly invalidAbaError: Locator;
-  readonly sameAccountInFieldsError: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -34,12 +32,10 @@ export class TransfersPage extends BasePage {
       name: 'Confirmar Transferencia',
     });
     this.transferConfirmationButton = page.getByRole('button', { name: 'Confirmar' });
-    this.limitTransferError = page.getByText('El monto máximo por');
-    this.dailyLimitError = page.getByText('Has excedido el límite diario');
     this.transferConfirmationMessage = page.getByText('Transferencia realizada');
+    this.limitTransferError = page.getByText('El monto máximo por');
     this.abaField = page.getByRole('textbox', { name: 'CBU/Alias destino' });
     this.invalidAbaError = page.getByText('CBU o Alias de destino no vá');
-    this.sameAccountInFieldsError = page.getByText('La cuenta origen y destino no');
   }
 
   protected async transfer(
@@ -80,28 +76,13 @@ export class TransfersPage extends BasePage {
     await expect(this.limitTransferError).toBeVisible();
   }
 
-  protected async dailyLimit(
-    type: string,
-    sourceAccount: string,
-    destinationAccount: string,
-    transferAmmount: string,
-  ) {
-    await this.transferTypeField.selectOption(type);
-    await this.sourceAccountField.selectOption(sourceAccount);
-    await expect(this.destinationAccountField).toBeEnabled();
-    await expect(this.transfersPageHeading).toBeVisible();
-    await expect(this.transferButton).toBeEnabled();
-    await this.destinationAccountField.selectOption(destinationAccount);
-    await expect(this.transferAmmountField).toBeEnabled();
-    await this.transferAmmountField.fill(transferAmmount);
-    await this.transferButton.scrollIntoViewIfNeeded();
-    await this.transferButton.click();
-    await expect(this.sameAccountInFieldsError).toBeVisible();
-    await this.destinationAccountField.selectOption(destinationAccount);
-    await this.transferButton.click();
-    await expect(this.transferConfirmationHeading).toBeVisible();
-    await this.transferConfirmationButton.click();
-    await expect(this.dailyLimitError).toBeVisible();
+  async transferLimit() {
+    await this.limitTransfer(
+      transfer.type.personalTransfer,
+      transfer.sourceAccount.checkingAccount,
+      transfer.destinationAccount.savingsAccount,
+      transfer.transferAmmount.limitTransferAmmount,
+    );
   }
 
   protected async invalidAbaTransfer(
@@ -132,39 +113,6 @@ export class TransfersPage extends BasePage {
     );
   }
 
-  async goToMainPage() {
-    await this.homeSection.scrollIntoViewIfNeeded();
-    await this.homeSection.click();
-    return new DashboardPage(this.page);
-  }
-
-  async transferLimit() {
-    await this.limitTransfer(
-      transfer.type.personalTransfer,
-      transfer.sourceAccount.checkingAccount,
-      transfer.destinationAccount.savingsAccount,
-      transfer.transferAmmount.limitTransferAmmount,
-    );
-  }
-
-  async dailyTransferLimit() {
-    await this.transfer(
-      transfer.type.personalTransfer,
-      transfer.sourceAccount.checkingAccount,
-      transfer.destinationAccount.savingsAccount,
-      transfer.transferAmmount.dailyLimitedAmmount,
-    );
-  }
-
-  async validateDailyTransferLimit() {
-    await this.dailyLimit(
-      transfer.type.personalTransfer,
-      transfer.sourceAccount.checkingAccount,
-      transfer.destinationAccount.savingsAccount,
-      transfer.transferAmmount.dailyLimitedAmmount,
-    );
-  }
-
   async validateInvalidAba() {
     await this.invalidAbaTransfer(
       transfer.type.externalTransfer,
@@ -172,5 +120,11 @@ export class TransfersPage extends BasePage {
       transfer.destinationAccount.invalidAba,
       transfer.transferAmmount.personalTransferAmmount,
     );
+  }
+
+  async goToMainPage() {
+    await this.homeSection.scrollIntoViewIfNeeded();
+    await this.homeSection.click();
+    return new DashboardPage(this.page);
   }
 }

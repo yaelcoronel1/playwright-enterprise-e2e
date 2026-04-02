@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { BasePage } from '../pages/base.page';
+import { BasePage } from '../../base.page';
 
 export class DocumentationPanel extends BasePage {
   readonly docPanel: Locator;

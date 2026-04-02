@@ -10,6 +10,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      PLAYWRIGHT_BASE_URL: https://homebanking-demo-tests.netlify.app
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,9 +38,6 @@ jobs:
 
       - name: Run ESLint
         run: npm run lint
-
-      - name: Run ESLint fix
-        run: npm run lint:fix
 
       - name: Run Tests
         run: npx playwright test

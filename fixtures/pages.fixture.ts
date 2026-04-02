@@ -1,9 +1,10 @@
 import { test as base } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
 import { LoginPage } from '../pages/login.page';
-import { DocumentationPanel } from '../pages/documentation.panel';
+import { DocumentationPanel } from '../pages/components/login_page/documentation.panel';
 import { DashboardPage } from '../pages/dashboard.page';
 import { LoansPage } from '../pages/loans.page';
+import { TransfersPage } from '../pages/transfers.page';
 
 type Pages = {
   basePage: BasePage;
@@ -11,6 +12,7 @@ type Pages = {
   documentationPanel: DocumentationPanel;
   dashboardPage: DashboardPage;
   loansPage: LoansPage;
+  transfersPage: TransfersPage;
 };
 
 export const test = base.extend<Pages>({
@@ -32,6 +34,10 @@ export const test = base.extend<Pages>({
 
   loansPage: async ({ page }, use) => {
     await use(new LoansPage(page));
+  },
+
+  transfersPage: async ({ page }, use) => {
+    await use(new TransfersPage(page));
   },
 });
 

@@ -27,12 +27,12 @@ export class LoginPage extends BasePage {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
-    const dashboardPage = new DashboardPage(this.page);
-    return dashboardPage;
   }
 
   async validLogin() {
     await this.login(users.valid.username, users.valid.password);
+    const dashboardPage = new DashboardPage(this.page);
+    return dashboardPage;
   }
 
   async invalidLogin() {
