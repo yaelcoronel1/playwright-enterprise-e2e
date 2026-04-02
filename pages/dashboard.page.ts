@@ -115,8 +115,4 @@ export class DashboardPage extends BasePage {
   async validateBalanceAfterLoan() {
     await this.balance.validateBalanceAfterLoan();
   }
-
-  async validateTwoTransfers() {
-    await this.balance.validateTwoTransfers();
-  }
 }

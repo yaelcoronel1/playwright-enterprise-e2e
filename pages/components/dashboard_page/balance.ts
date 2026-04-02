@@ -12,7 +12,6 @@ export class BalanceComponent {
   readonly restoreBalancedHeading: Locator;
   readonly restoreBalanceConfirm: Locator;
   readonly accBalanceAfterLoan: Locator;
-  readonly balanceAfterTwoTransfers: Locator;
 
   constructor(page: Page) {
     this.checkingAccountBalance = page.getByText('125.450,75');
@@ -24,7 +23,6 @@ export class BalanceComponent {
     this.restoreBalancedHeading = page.getByRole('heading', { name: 'Restablecer Simulador' });
     this.restoreBalanceConfirm = page.getByRole('button', { name: 'Confirmar' });
     this.accBalanceAfterLoan = page.getByText('225.450,75');
-    this.balanceAfterTwoTransfers = page.getByText('169.320,50', { exact: true });
   }
 
   protected async validateBalance(
@@ -75,9 +73,5 @@ export class BalanceComponent {
 
   async validateBalanceAfterLoan() {
     await this.validateBalanceOnly(loan.ammounts.afterLoan);
-  }
-
-  async validateTwoTransfers() {
-    await expect(this.balanceAfterTwoTransfers).toBeVisible();
   }
 }

@@ -1,7 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from '../pages/base.page';
 import { DashboardPage } from './dashboard.page';
-import { transferLimitComponent } from './components/transfers_page/transfer-limit';
 import { transfer } from '../test-data/transfers/transfers';
 
 export class TransfersPage extends BasePage {
@@ -15,9 +14,9 @@ export class TransfersPage extends BasePage {
   readonly transferConfirmationHeading: Locator;
   readonly transferConfirmationButton: Locator;
   readonly transferConfirmationMessage: Locator;
+  readonly limitTransferError: Locator;
   readonly abaField: Locator;
   readonly invalidAbaError: Locator;
-  readonly limit: transferLimitComponent;
 
   constructor(page: Page) {
     super(page);
@@ -34,9 +33,9 @@ export class TransfersPage extends BasePage {
     });
     this.transferConfirmationButton = page.getByRole('button', { name: 'Confirmar' });
     this.transferConfirmationMessage = page.getByText('Transferencia realizada');
+    this.limitTransferError = page.getByText('El monto máximo por');
     this.abaField = page.getByRole('textbox', { name: 'CBU/Alias destino' });
     this.invalidAbaError = page.getByText('CBU o Alias de destino no vá');
-    this.limit = new transferLimitComponent(page);
   }
 
   protected async transfer(
@@ -58,16 +57,32 @@ export class TransfersPage extends BasePage {
     await expect(this.transferConfirmationMessage).toBeVisible();
   }
 
+  protected async limitTransfer(
+    type: string,
+    sourceAccount: string,
+    destinationAccount: string,
+    transferAmmount: string,
+  ) {
+    await this.transferTypeField.selectOption(type);
+    await this.sourceAccountField.selectOption(sourceAccount);
+    await expect(this.destinationAccountField).toBeEnabled();
+    await this.destinationAccountField.selectOption(destinationAccount);
+    await expect(this.transferAmmountField).toBeEnabled();
+    await this.transferAmmountField.fill(transferAmmount);
+    await this.transferButton.scrollIntoViewIfNeeded();
+    await this.transferButton.click();
+    await expect(this.transferConfirmationHeading).toBeVisible();
+    await this.transferConfirmationButton.click();
+    await expect(this.limitTransferError).toBeVisible();
+  }
+
   async transferLimit() {
-    await this.limit.transferLimit();
-  }
-
-  async dailyTransferLimit() {
-    await this.limit.dailyTransferLimit();
-  }
-
-  async validateDailyTransferLimit() {
-    await this.limit.validateDailyTransferLimit();
+    await this.limitTransfer(
+      transfer.type.personalTransfer,
+      transfer.sourceAccount.checkingAccount,
+      transfer.destinationAccount.savingsAccount,
+      transfer.transferAmmount.limitTransferAmmount,
+    );
   }
 
   protected async invalidAbaTransfer(
